@@ -37,7 +37,9 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan -parallelism=10
+        env:
+          TF_LOG: DEBUG  # Enable debug logging for Terraform
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
