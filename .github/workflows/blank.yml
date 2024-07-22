@@ -36,8 +36,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -50,14 +53,13 @@ jobs:
           az acr helm repo add --name instance --url https://instance.azurecr.io
           helm repo update
           for chart in $(helm search repo reference | grep -v NAME | awk '{print $1}'); do
-            helm fetch $chart --version 0.1.0
+            helm fetch $chart --version ${chart_version}
             helm push $chart https://instance.azurecr.io/helm/v1/repo
           done
 
       - name: Deploy Helm Chart to AKS
         run: |
-          az aks get-credentials --resource-group myResourceGroup --name myAKSClusster
+          az aks get-credentials --resource-group ${resource_group} --name ${aks_cluster_name}
           helm repo add instance https://instance.azurecr.io/helm/v1/repo
           helm repo update
-          helm upgrade --install ping-app-release instance/ping-appp --namespace default --version 0.1.0 --set key1=value1,key2=value2
-
+          helm upgrade --install ${release_name} instance/${chart_name} --namespace ${namespace} --version ${chart_version} --set key1=value1,key2=value2
