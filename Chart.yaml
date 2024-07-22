@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ping-app
+description: A Helm chart for Kubernetes that pings a specified IP address.
+version: 0.1.0
+
