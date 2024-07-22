@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set up Azure CLI
-      uses: azure/setup-azure@v1
+      uses: azure/setup-cli@v1
       with:
         azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -49,11 +49,11 @@ jobs:
     - name: Package Helm Chart
       run: |
         helm package ./pinng-app
-      working-directory: ./path/to/helm/chart
 
     - name: Deploy Helm Chart
       run: |
         helm install pinng-app ./pinng-app-0.1.0.tgz --namespace default
       env:
         HELM_EXPERIMENTAL_OCI: "1"
+
 
