@@ -11,6 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 120  # Set a timeout for the job (in minutes)
 
     env:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -55,7 +56,8 @@ jobs:
 
       - name: Deploy Helm Chart to AKS
         run: |
-          az aks get-credentials --resource-group  --name myResourceGroup --name myAKSClusster
+          az aks get-credentials --resource-group myResourceGroup --name myAKSClusster
           helm repo add instance https://instance.azurecr.io/helm/v1/repo
           helm repo update
           helm upgrade --install ping-app-release instance/ping-appp --namespace default --version 0.1.0 --set key1=value1,key2=value2
+
